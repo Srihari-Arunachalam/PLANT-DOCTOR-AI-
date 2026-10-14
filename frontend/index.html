@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlantDoctor – Crop IQ </title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header>
+    <div class="header-inner">
+      <div class="logo-icon">🌱</div>
+      <div class="header-text">
+        <h1>Plant Doctor</h1>
+        <p data-i18n="subtitle">AI-POWERED CROP DISEASE DETECTION · CROP IQ</p>
+      </div>
+      <div id="header-right">
+
+        <!-- Weather Widget -->
+        <div class="weather-chip" id="weather-chip" style="display:none;">
+          <span id="weather-icon">🌤️</span>
+          <div class="weather-info">
+            <span id="weather-temp" class="weather-temp">--°C</span>
+            <span id="weather-place" class="weather-place">--</span>
+          </div>
+        </div>
+
+        <!-- Language Selector -->
+        <div class="lang-box" id="lang-box" onclick="toggleLangMenu()">
+          <span class="lang-globe">🌐</span>
+          <span id="lang-current-label" class="lang-current-label">EN</span>
+          <span class="lang-arrow">▾</span>
+        </div>
+        <div class="lang-menu" id="lang-menu" style="display:none;">
+          <div class="lang-menu-item active" data-lang="en" onclick="selectLang('en')">
+            <span class="lang-flag">🇬🇧</span>
+            <div><div class="lang-name">English</div><div class="lang-native">English</div></div>
+            <span class="lang-tick" id="tick-en">✓</span>
+          </div>
+          <div class="lang-menu-item" data-lang="ta" onclick="selectLang('ta')">
+            <span class="lang-flag">🇮🇳</span>
+            <div><div class="lang-name">Tamil</div><div class="lang-native">தமிழ்</div></div>
+            <span class="lang-tick" id="tick-ta" style="display:none;">✓</span>
+          </div>
+          <div class="lang-menu-item" data-lang="hi" onclick="selectLang('hi')">
+            <span class="lang-flag">🇮🇳</span>
+            <div><div class="lang-name">Hindi</div><div class="lang-native">हिंदी</div></div>
+            <span class="lang-tick" id="tick-hi" style="display:none;">✓</span>
+          </div>
+        </div>
+
+        <button class="history-btn" id="history-btn">📋 History</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Upload Section -->
+    <div class="card" id="upload-section">
+      <p class="section-title" data-i18n="diagnoseTitle">Diagnose Your Crop 🔬</p>
+      <p class="section-sub" data-i18n="diagnoseSubtitle">Upload a clear photo of the affected leaf. AI will auto-detect the crop and disease instantly.</p>
+
+      <div class="upload-buttons">
+        <label class="btn-upload" for="file-gallery" data-i18n="uploadGallery">📁 Upload from Gallery</label>
+        <label class="btn-upload" for="file-camera" data-i18n="uploadCamera">📷 Capture with Camera</label>
+      </div>
+
+      <input type="file" id="file-gallery" accept="image/*" style="display:none" />
+      <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none" />
+
+      <div id="preview-box" style="display:none;">
+        <img id="preview-img" src="" alt="Leaf preview" />
+        <div class="preview-overlay" id="preview-overlay">📸 Image ready for analysis</div>
+      </div>
+
+      <div id="crop-detect-box" style="display:none;">
+        <div id="crop-detecting" class="crop-status-row">
+          <span class="crop-spin">⏳</span>
+          <span data-i18n="detectingCrop">Identifying crop from photo...</span>
+        </div>
+        <div id="crop-detected" class="crop-status-row" style="display:none;">
+          <span>✅</span>
+          <span data-i18n="cropDetectedLabel">Crop Detected:</span>
+          <span id="crop-name-badge" class="crop-name-badge"></span>
+        </div>
+      </div>
+
+      <button id="detect-btn" disabled>
+        <span data-i18n="detectBtn">🔬 Detect Disease</span>
+      </button>
+
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+
+    <!-- Loading Section -->
+    <div class="card" id="loading-section" style="display:none;">
+      <div class="leaf-loader"></div>
+      <p class="loading-title" id="loading-title" data-i18n="analyzingTitle">Analyzing Leaf...</p>
+      <p class="loading-sub" id="loading-sub" data-i18n="analyzingSubtitle">AI is detecting disease patterns and generating your treatment plan.</p>
+      <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+      <div class="loading-steps" id="loading-step-text"></div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section" style="display:none;">
+      <div class="card">
+        <div class="result-header">
+          <img id="result-img" class="result-img" src="" alt="Analyzed leaf" />
+          <div class="result-meta">
+            <div class="crop-tag">🌱 <span id="result-crop"></span></div>
+            <h2 id="result-disease">Loading...</h2>
+            <div id="result-severity"></div>
+          </div>
+        </div>
+        <div class="ai-block">
+          <div class="ai-block-title" data-i18n="confidence">Detection Confidence</div>
+          <div id="confidence-bars"></div>
+        </div>
+        <div class="ai-block">
+          <div class="ai-block-title" data-i18n="overview">Disease Overview</div>
+          <p id="result-overview"></p>
+        </div>
+        <div class="ai-block">
+          <div class="ai-block-title" data-i18n="symptoms">Symptoms Identified</div>
+          <ul id="result-symptoms"></ul>
+        </div>
+        <div class="ai-block">
+          <div class="ai-block-title" data-i18n="treatment">Treatment Steps</div>
+          <ul id="result-treatment"></ul>
+        </div>
+        <div class="ai-block">
+          <div class="ai-block-title" data-i18n="prevention">Prevention Tips</div>
+          <ul id="result-prevention"></ul>
+        </div>
+        <!-- Recommended Products -->
+        <div class="ai-block product-block" id="result-products" style="display:none;">
+          <div class="ai-block-title">🧪 Recommended Products</div>
+          <div id="result-products-list"></div>
+        </div>
+        <div class="action-row">
+          <button class="btn-action btn-secondary" id="new-scan-btn" data-i18n="newScan">🔄 New Scan</button>
+          <button class="btn-action btn-primary"   id="share-btn"   data-i18n="copyReport">📋 Copy Report</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div id="history-section" style="display:none;">
+      <div class="card">
+        <div class="history-header">
+          <p class="section-title">📋 Scan History</p>
+          <button class="btn-action btn-secondary" id="history-back-btn" style="width:auto;padding:8px 16px;">← Back</button>
+        </div>
+        <div id="history-list"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>Developed by <strong>Crop IQ</strong></footer>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

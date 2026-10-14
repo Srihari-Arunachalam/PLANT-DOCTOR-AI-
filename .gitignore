@@ -1,0 +1,9 @@
+training/
+dataset/
+node_modules/
+.env
+__pycache__/
+*.h5
+*.pt
+*.pth
+*.ckpt
